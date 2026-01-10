@@ -1,12 +1,34 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import HeroSection from '@/components/HeroSection';
+import ChatInterface from '@/components/ChatInterface';
+import type { UserMode } from '@/services/mockApi';
 
 const Index = () => {
+  const [userMode, setUserMode] = useState<UserMode | null>(null);
+
+  const handleSelectMode = (mode: UserMode) => {
+    setUserMode(mode);
+  };
+
+  const handleBack = () => {
+    setUserMode(null);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen flex flex-col bg-background">
+      <Header />
+      
+      <main className="flex-1 pt-16">
+        {userMode ? (
+          <ChatInterface mode={userMode} onBack={handleBack} />
+        ) : (
+          <HeroSection onSelectMode={handleSelectMode} />
+        )}
+      </main>
+
+      {!userMode && <Footer />}
     </div>
   );
 };
