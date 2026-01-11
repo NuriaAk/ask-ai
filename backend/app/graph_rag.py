@@ -1,6 +1,7 @@
 from typing import List, Protocol
 
 from app.db import GraphNode
+from app.llm import generate_with_groq
 
 
 class GraphDB(Protocol):
@@ -17,6 +18,10 @@ def _format_context(nodes: List[GraphNode]) -> str:
 def generate_answer(question: str, mode: str, graph_db: GraphDB) -> str:
     nodes = graph_db.search(question=question, mode=mode)
     context = _format_context(nodes)
+
+    llm_answer = generate_with_groq(question=question, mode=mode, context=context)
+    if llm_answer:
+        return llm_answer
 
     if mode == "technical":
         return (
