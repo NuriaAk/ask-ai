@@ -219,7 +219,7 @@ def _get_text_properties() -> List[str]:
     props = os.getenv("NEO4J_TEXT_PROPERTIES")
     if props:
         return [prop.strip() for prop in props.split(",") if prop.strip()]
-    return ["text", "content", "body"]
+    return ["text"]
 
 
 def get_graph_db() -> MockNeo4jAura | Neo4jGraphDB:
@@ -243,7 +243,7 @@ def get_graph_db() -> MockNeo4jAura | Neo4jGraphDB:
             password=password,
             database=database,
             text_properties=_get_text_properties(),
-            fulltext_index=os.getenv("NEO4J_FULLTEXT_INDEX"),
+            fulltext_index=os.getenv("NEO4J_FULLTEXT_INDEX", "keyword"),
             instance_name=os.getenv("AURA_INSTANCENAME"),
         )
     return _neo4j_db
