@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { sendMessage, createUserMessage } from "@/services/mockApi";
+import { sendMessage, createUserMessage } from "@/services/api";
 
 describe("mockApi", () => {
   describe("createUserMessage", () => {

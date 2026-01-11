@@ -1,5 +1,5 @@
 import { User, Bot } from 'lucide-react';
-import type { ChatMessage as ChatMessageType } from '@/services/mockApi';
+import type { ChatMessage as ChatMessageType } from '@/services/api';
 
 interface ChatMessageProps {
   message: ChatMessageType;

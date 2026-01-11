@@ -1,5 +1,5 @@
 import { Sparkles, Code2 } from 'lucide-react';
-import type { UserMode } from '@/services/mockApi';
+import type { UserMode } from '@/services/api';
 
 interface ExperienceSelectorProps {
   onSelect: (mode: UserMode) => void;

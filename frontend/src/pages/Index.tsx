@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import HeroSection from '@/components/HeroSection';
 import ChatInterface from '@/components/ChatInterface';
-import type { UserMode } from '@/services/mockApi';
+import type { UserMode } from '@/services/api';
 
 const Index = () => {
   const [userMode, setUserMode] = useState<UserMode | null>(null);

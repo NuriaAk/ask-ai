@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ChatInterface from "@/components/ChatInterface";
-import * as mockApi from "@/services/mockApi";
+import * as mockApi from "@/services/api";
 
 // Mock the mockApi module
-vi.mock("@/services/mockApi", async () => {
-  const actual = await vi.importActual("@/services/mockApi");
+vi.mock("@/services/api", async () => {
+  const actual = await vi.importActual("@/services/api");
   return {
     ...actual,
     sendMessage: vi.fn(),

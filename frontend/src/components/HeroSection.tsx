@@ -1,5 +1,5 @@
 import ExperienceSelector from './ExperienceSelector';
-import type { UserMode } from '@/services/mockApi';
+import type { UserMode } from '@/services/api';
 
 interface HeroSectionProps {
   onSelectMode: (mode: UserMode) => void;

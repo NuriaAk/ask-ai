@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, ArrowLeft, Loader2 } from 'lucide-react';
-import { sendMessage, createUserMessage, type ChatMessage as ChatMessageType, type UserMode } from '@/services/mockApi';
+import { sendMessage, createUserMessage, type ChatMessage as ChatMessageType, type UserMode } from '@/services/api';
 import ChatMessage from './ChatMessage';
 
 interface ChatInterfaceProps {

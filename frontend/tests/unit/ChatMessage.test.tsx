@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import ChatMessage from "@/components/ChatMessage";
-import type { ChatMessage as ChatMessageType } from "@/services/mockApi";
+import type { ChatMessage as ChatMessageType } from "@/services/api";
 
 describe("ChatMessage", () => {
   it("should render user message correctly", () => {
