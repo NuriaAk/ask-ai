@@ -3,15 +3,26 @@ import sys
 from pathlib import Path
 
 from fastapi.testclient import TestClient
+import pytest
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-os.environ.setdefault("USE_MOCK_NEO4J", "true")
 
 from app.main import app  # noqa: E402
 
 
 client = TestClient(app)
+
+if not all(
+    [
+        os.environ.get("NEO4J_URI"),
+        os.environ.get("NEO4J_USERNAME"),
+        os.environ.get("NEO4J_PASSWORD"),
+    ]
+):
+    pytest.skip(
+        "Neo4j environment not configured for integration tests.",
+        allow_module_level=True,
+    )
 
 
 def test_send_message_technical() -> None:
