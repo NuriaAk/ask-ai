@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { sendMessage, createUserMessage } from "@/services/api";
 
-describe("mockApi", () => {
+describe("api", () => {
   describe("createUserMessage", () => {
     it("should create a user message with correct properties", () => {
       const content = "Test message";
