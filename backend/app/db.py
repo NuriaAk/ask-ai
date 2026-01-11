@@ -25,7 +25,7 @@ class MockNeo4jAura:
     nodes: Dict[str, GraphNode] = field(default_factory=dict)
     edges: List[GraphEdge] = field(default_factory=list)
 
-    def search(self, question: str, mode: str, limit: int = 5) -> List[GraphNode]:
+    def search(self, question: str, mode: str, limit: int = 10) -> List[GraphNode]:
         lowered = question.lower()
         hits = []
 
@@ -80,7 +80,7 @@ class Neo4jGraphDB:
                 return value
         return None
 
-    def search(self, question: str, mode: str, limit: int = 5) -> List[GraphNode]:
+    def search(self, question: str, mode: str, limit: int = 10) -> List[GraphNode]:
         query = question.strip()
         if not query:
             return []
@@ -90,40 +90,46 @@ class Neo4jGraphDB:
 
         with self.driver.session(database=self.database) as session:
             if self.fulltext_index:
-                records = session.run(
-                    """
-                    CALL db.index.fulltext.queryNodes($index, $query)
-                    YIELD node, score
-                    RETURN node, score
-                    ORDER BY score DESC
-                    LIMIT $limit
-                    """,
-                    index=self.fulltext_index,
-                    query=query,
-                    limit=limit,
-                )
-                for record in records:
-                    node = record["node"]
-                    text = self._extract_text(node)
-                    if not text:
-                        continue
-                    node_id = str(node.id)
-                    if node_id in seen_ids:
-                        continue
-                    label = next(iter(node.labels), "Node")
-                    nodes.append(GraphNode(node_id=node_id, label=label, text=text))
-                    seen_ids.add(node_id)
+                indexes = [idx.strip() for idx in self.fulltext_index.split(",") if idx.strip()]
+                for index_name in indexes:
+                    records = session.run(
+                        """
+                        CALL db.index.fulltext.queryNodes($index, $search_text)
+                        YIELD node, score
+                        RETURN node, score
+                        ORDER BY score DESC
+                        LIMIT $limit
+                        """,
+                        index=index_name,
+                        search_text=query,
+                        limit=limit,
+                    )
+                    for record in records:
+                        node = record["node"]
+                        text = self._extract_text(node)
+                        if not text:
+                            continue
+                        node_id = str(node.id)
+                        if node_id in seen_ids:
+                            continue
+                        label = next(iter(node.labels), "Node")
+                        nodes.append(GraphNode(node_id=node_id, label=label, text=text))
+                        seen_ids.add(node_id)
+                        if len(nodes) >= limit:
+                            break
+                    if len(nodes) >= limit:
+                        break
             else:
                 for prop in self.text_properties:
                     records = session.run(
                         """
                         MATCH (n)
-                        WHERE n[$prop] CONTAINS $query
+                        WHERE n[$prop] CONTAINS $search_text
                         RETURN n
                         LIMIT $limit
                         """,
                         prop=prop,
-                        query=query,
+                        search_text=query,
                         limit=limit,
                     )
                     for record in records:
@@ -219,7 +225,7 @@ def _get_text_properties() -> List[str]:
     props = os.getenv("NEO4J_TEXT_PROPERTIES")
     if props:
         return [prop.strip() for prop in props.split(",") if prop.strip()]
-    return ["text"]
+    return ["text", "description"]
 
 
 def get_graph_db() -> MockNeo4jAura | Neo4jGraphDB:
@@ -243,7 +249,7 @@ def get_graph_db() -> MockNeo4jAura | Neo4jGraphDB:
             password=password,
             database=database,
             text_properties=_get_text_properties(),
-            fulltext_index=os.getenv("NEO4J_FULLTEXT_INDEX", "keyword"),
+            fulltext_index=os.getenv("NEO4J_FULLTEXT_INDEX", "keyword,entities"),
             instance_name=os.getenv("AURA_INSTANCENAME"),
         )
     return _neo4j_db
