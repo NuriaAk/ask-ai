@@ -40,7 +40,8 @@ def generate_with_groq(
         return None
 
     model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instruct")
-    url = "https://api.groq.com/openai/v1/chat/completions"
+    base_url = os.getenv("GROQ_API_BASE", "https://api.groq.com/openai/v1")
+    url = f"{base_url.rstrip('/')}/chat/completions"
     payload = {
         "model": model,
         "messages": _build_messages(mode=mode, context=context, question=question),
