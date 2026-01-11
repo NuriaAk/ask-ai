@@ -1,15 +1,20 @@
-from typing import List
+from typing import List, Protocol
 
-from app.db import MockNeo4jAura
+from app.db import GraphNode
 
 
-def _format_context(nodes: List[object]) -> str:
+class GraphDB(Protocol):
+    def search(self, question: str, mode: str, limit: int = 5) -> List[GraphNode]:
+        ...
+
+
+def _format_context(nodes: List[GraphNode]) -> str:
     if not nodes:
         return ""
     return " ".join(node.text for node in nodes)
 
 
-def generate_answer(question: str, mode: str, graph_db: MockNeo4jAura) -> str:
+def generate_answer(question: str, mode: str, graph_db: GraphDB) -> str:
     nodes = graph_db.search(question=question, mode=mode)
     context = _format_context(nodes)
 
