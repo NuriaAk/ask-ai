@@ -1,14 +1,24 @@
 import asyncio
+import os
+from pathlib import Path
 from datetime import datetime, timezone
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 
-from app.db import get_graph_db
-from app.graph_rag import generate_answer
-from app.models import ChatMessage, ChatRequest
+env_path = os.getenv("ENV_FILE")
+if env_path:
+    load_dotenv(env_path)
+else:
+    backend_env = Path(__file__).resolve().parents[1] / ".env"
+    load_dotenv(backend_env)
+
+from app.db import get_graph_db  # noqa: E402
+from app.graph_rag import generate_answer  # noqa: E402
+from app.models import ChatMessage, ChatRequest  # noqa: E402
 
 app = FastAPI(title="Ask AI Backend API", version="0.1.0")
 
