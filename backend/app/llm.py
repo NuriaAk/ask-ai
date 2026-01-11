@@ -39,7 +39,7 @@ def generate_with_groq(
     if not api_key:
         return None
 
-    model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instruct")
+    model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
     base_url = os.getenv("GROQ_API_BASE", "https://api.groq.com/openai/v1")
     url = f"{base_url.rstrip('/')}/chat/completions"
     payload = {
