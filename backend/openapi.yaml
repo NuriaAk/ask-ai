@@ -1,0 +1,116 @@
+openapi: 3.0.3
+info:
+  title: Ask AI Backend API
+  version: 0.1.0
+  description: API surface inferred from the frontend chat experience.
+servers:
+  - url: http://localhost:3000
+    description: Local development
+tags:
+  - name: Chat
+    description: Chat message exchange
+paths:
+  /chat/messages:
+    post:
+      tags:
+        - Chat
+      summary: Send a user question and receive an assistant response
+      operationId: sendChatMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatRequest"
+            examples:
+              technical:
+                value:
+                  question: "How do autonomous agents coordinate tasks?"
+                  mode: technical
+              nonTechnical:
+                value:
+                  question: "What is an AI agent?"
+                  mode: non-technical
+      responses:
+        "200":
+          description: Assistant response message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatMessage"
+              examples:
+                assistant:
+                  value:
+                    id: "f1d9f3c0-5e9b-4b4f-9e33-7b8e7f2e3b1a"
+                    role: assistant
+                    content: "Think of an AI agent like a helpful digital assistant..."
+                    timestamp: "2024-01-15T10:20:30Z"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    ChatRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - question
+        - mode
+      properties:
+        question:
+          type: string
+          minLength: 1
+          description: The user's question or prompt.
+        mode:
+          $ref: "#/components/schemas/UserMode"
+    UserMode:
+      type: string
+      enum:
+        - technical
+        - non-technical
+      description: Controls the response style.
+    ChatMessage:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - role
+        - content
+        - timestamp
+      properties:
+        id:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum:
+            - user
+            - assistant
+        content:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp in UTC.
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Machine-readable error code.
+        message:
+          type: string
+          description: Human-readable error message.
